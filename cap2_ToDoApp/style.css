@@ -31,7 +31,7 @@ main {
   padding-top: 8rem;
 }
 
-form {
+#form {
   background-color: peachpuff;
   padding: 1.5rem;
   padding-top: 2rem;
@@ -94,4 +94,9 @@ form {
 .toDoList {
   list-style: none;
   padding: 1rem;
+}
+
+li {
+  list-style: none;
+  padding: 0.5rem;
 }
