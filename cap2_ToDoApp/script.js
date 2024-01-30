@@ -7,15 +7,9 @@ const addField = document.getElementById("addField");
 const addButton = document.getElementById("addButton");
 const ul = document.getElementById("ul");
 
-
-// get sure that DOM was completely initialized
-document.addEventListener("DOMContentLoaded", function () {
-    const todoList = document.getElementById("todoList");
-};
-
-//state
+//STATE
 let state = {
-  todos: [{}],
+  todos: [],
   filter: "all", //default filter is 'all'
 };
 //receive state vom localStorage
@@ -26,15 +20,17 @@ if (rawAppState !== null) {
   state = receivedAppState;
 }
 
-//rendering
+// RENDER
 function render() {
   ul.innerHTML = "";
 
-  //safe state in local storage
+  //safe state in localStorage
   localStorage.setItem("state.todos", JSON.stringify(state));
 
-  for (let i = 0; i < state.todos.length; ++i) {
-    const todo = state.todos[i];
+  const filteredTodos = filterTodos(state.todos, state.filter);
+
+  for (let i = 0; i < filteredTodos.length; i++) {
+    const todo = filteredTodos[i];
 
     // create elements for todo
     const listElement = document.createElement("li");
@@ -44,9 +40,6 @@ function render() {
     const checkboxLiEl = document.createElement("input");
     checkboxLiEl.setAttribute("type", "checkbox");
     checkboxLiEl.checked = todo.done;
-    //checkboxLiEl.setAttribute("checked", todo.done);
-
-    listElement.appendChild(checkboxLiEl);
 
     // Create span element for todo description
     const description = document.createElement("span");
@@ -56,7 +49,6 @@ function render() {
     // Durchgestrichen, wenn die Checkbox gecheckt ist, sonst normal
     description.style.textDecoration = todo.done ? "line-through" : "none";
     // ---> description.classList.add ("todoDescription")
-
     // Event listener for checkbox change
     checkboxLiEl.addEventListener("change", function () {
       todo.done = !todo.done;
@@ -68,12 +60,20 @@ function render() {
     listElement.appendChild(description);
 
     ul.appendChild(listElement);
-    // filter todos based on the selected filter
-    const filteredTodos = filteredTodos(state.todos, state.filter);
+  }
+
+  if (state.filter === "all") {
+    all.checked = true;
+  }
+  if (state.filter === "undone") {
+    undone.checked = true;
+  }
+  if (state.filter === "done") {
+    done.checked = true;
   }
 }
 
-// filtered todos based on the selected filter
+//filter todos
 function filterTodos(todos, filter) {
   switch (filter) {
     case "all":
@@ -86,38 +86,44 @@ function filterTodos(todos, filter) {
       return todos;
   }
 }
-render();
+
+//filterTodos (state.todos, "done")
+
 //actions;
-function toDoLi(li) {
-  state.todos = state.todos;
-}
-render();
 
 //eventlistener for static elements
 
-//remove done Todos
+// Event listener for checkbox change
+//remove done todos
 function removeDoneTodos() {
   state.todos = state.todos.filter((todo) => todo.done !== true);
   render();
 }
-
 removeButton.addEventListener("click", removeDoneTodos);
-render();
 
 // set filter when radio button changes
-function setFilter(event) {
-  state.filter = event.target.value;
+/*function setFilter(event) {
+  state.filter = event.target.id;
   render();
-}
 
-all.addEventListener("change", setFilter);
-render();
-done.addEventListener("change", setFilter);
-render();
-undone.addEventListener("change", setFilter);
-render();
+  undone.addEventListener("change", setFilter);
+} */
 
-//eventlistener for dynamic elements
+all.addEventListener("change", () => {
+  state.filter = "all";
+  render();
+});
+
+done.addEventListener("change", () => {
+  state.filter = "done";
+  render();
+});
+undone.addEventListener("change", () => {
+  state.filter = "undone";
+  render();
+});
+
+//EVENTLISTENER for dynamic elements
 
 // add new todo
 function addTodo() {
@@ -139,8 +145,8 @@ function addTodo() {
 
   render();
 }
+
 addButton.addEventListener("click", addTodo);
-render();
 
 //Initial rendering
 render();
