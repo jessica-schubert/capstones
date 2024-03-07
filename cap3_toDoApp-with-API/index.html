@@ -7,32 +7,37 @@
     <meta name="author" content="Jessica Schubert">
     <link rel="stylesheet" href="style.css">
 
-    <title>To Do App</title>
+    <title>My To Do's</title>
 
 </head>
-<header>
-    * To Do App *
-</header>
 
 <body>
+    <header>
+        <h1>* My To Do App *</h1>
+    </header>
     <main>
-        <div class="sorted">
-            <input type="radio" name="All" id="All">
-            <label for="All">All</label><br>
-            <input type="radio" name="Open" id="Open">
-            <label for="All">Open</label><br>
-            <input type="radio" name="Done" id="Done">
-            <label for="Done">Done</label><br>
+        <div id="form">
+            <form class="radioButtons">
+                <input type="radio" name="radioButton" id="all">
+                <label for="all">All</label><br>
+                <input type="radio" name="radioButton" id="done">
+                <label for="done">Done</label><br>
+                <input type="radio" name="radioButton" id="undone">
+                <label for="undone">Undone</label><br>
+            </form>
+            <form class="removeButton">
+                <button class="buttons" id="removeButton">Remove all Done To Do's</button>
+            </form>
+
+            <div class="addSection">
+                <input type="text" name="addField" id="addField">
+                <button class="buttons" id="addButton">Add</button>
+            </div>
+            <ul class="toDoList" id="ul"></ul>
+
         </div>
-
-        <button id="removeButton">Remove Done To Do's</button><br>
-
-        <input type="field" id="addToDo">
-        <button id="addButton">Add</button><br>
-
-        <ul id="toDoLi">
-        </ul>
     </main>
+
 
     <script src="script.js"></script>
 </body>
