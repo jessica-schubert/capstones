@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Jessica Schubert">
+    <link rel="stylesheet" href="style.css">
+
+    <title>My To Do's</title>
+
+</head>
+
+<body>
+    <header>
+        <h1>* My To Do App *</h1>
+    </header>
+    <main>
+        <div id="form">
+            <form class="radioButtons">
+                <input type="radio" name="radioButton" id="all">
+                <label for="all">All</label><br>
+                <input type="radio" name="radioButton" id="done">
+                <label for="done">Done</label><br>
+                <input type="radio" name="radioButton" id="undone">
+                <label for="undone">Undone</label><br>
+            </form>
+            <form class="removeButton">
+                <button class="buttons" id="removeButton">Remove all Done To Do's</button>
+            </form>
+
+            <div class="addSection">
+                <input type="text" name="addField" id="addField">
+                <button class="buttons" id="addButton">Add</button>
+            </div>
+            <ul class="toDoList" id="ul"></ul>
+
+        </div>
+    </main>
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>

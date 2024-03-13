@@ -3,73 +3,81 @@ const all = document.getElementById("all");
 const done = document.getElementById("done");
 const undone = document.getElementById("undone");
 const removeButton = document.getElementById("removeButton");
-const addField = document.getElementById("addField");
+const textInput = document.getElementById("addField");
 const addButton = document.getElementById("addButton");
 const ul = document.getElementById("ul");
 
 const url = "http://localhost:4730/todos";
 
-// ++++ LOCAL STATE ++++
+// +++++ STATE ++++
 let state = {
   todos: [],
-  filter: "all",
+  filter: "all", //default filter
 };
 
-// ++++ Initial Call ++++
-loadTodosFromAPI();
+// +++++ Initial Call +++++
+// fetch from API
+refresh();
 
-// ++++ FUNCTIONS ++++
+// +++++ FUNCTIONS +++++
 
-//fetch from API => REFRESH function
-function loadTodosFromAPI() {
+// ++++ REFRESH function ++++
+
+function refresh() {
   fetch(url)
     .then((response) => response.json())
     .then((todosFromAPI) => {
-      state.todos = todosFromAPI;
-      renderTodos();
-      console.log("got todos from API");
-    });
+      (state.todos = todosFromAPI), render(), console.log("Got your Todos!");
+    })
+    .catch((error) => console.error("So sorry, can't find your todos..."));
 }
 
-// RENDER function
-function renderTodos() {
+// +++++ RENDER function +++++
+
+function render() {
   ul.innerHTML = "";
 
-  //
-  //state.todos.filter(Aris Callback).forEach((todo) => {}
+  state.todos
+    .filter((todo) => {
+      if (state.filter === "done") {
+        return todo.done === true;
+      } else if (state.filter === "undone") {
+        return todo.done === false;
+      }
+      return true;
+    })
+    .forEach((todo) => {
+      // create list element for todo
+      const listElement = document.createElement("li");
+      // create checkbox for todo
+      const checkbox = document.createElement("input");
+      checkbox.setAttribute("type", "checkbox");
+      checkbox.checked = todo.done;
 
-  state.todos.forEach((todo) => {
-    // create elements for todo
-    const listElement = document.createElement("li");
+      // create span element for todo description
+      const description = document.createElement("span");
+      console.log(todo);
+      description.textContent = todo.description;
+      description.style.padding = ".5rem";
+      // Durchgestrichen, wenn die Checkbox gecheckt ist, sonst normal
+      description.style.textDecoration = todo.done ? "line-through" : "none";
 
-    //create checkbox für todo
-    const checkboxLiEl = document.createElement("input");
-    checkboxLiEl.setAttribute("type", "checkbox");
-    checkboxLiEl.checked = todo.done;
+      // append checkbox and span to list element
+      listElement.appendChild(checkbox);
+      listElement.appendChild(description);
 
-    // Create span element for todo description
-    const description = document.createElement("span");
-    description.textContent = todo.description;
-    description.style.padding = ".5rem";
+      // append list element to ul
+      ul.appendChild(listElement);
 
-    // Durchgestrichen, wenn die Checkbox gecheckt ist, sonst normal
-    description.style.textDecoration = todo.done ? "line-through" : "none";
-    // ---> description.classList.add ("todoDescription")
-
-    // Append checkbox and span to the list element
-    listElement.appendChild(checkboxLiEl);
-    listElement.appendChild(description);
-
-    ul.appendChild(listElement);
-
-    // Event listener for checkbox change
-    checkboxLiEl.addEventListener("change", function (event) {
-      const doneState = checkbox.checked;
-      todo.done = doneState;
-      updateDoneState(todo);
-      renderTodos();
+      // event listener for checkbox change
+      checkbox.addEventListener("change", function (event) {
+        // todo.done = !todo.done;
+        const doneState = checkbox.checked;
+        todo.done = doneState;
+        updateDoneState(todo);
+        render();
+      });
     });
-  });
 
   if (state.filter === "all") {
     all.checked = true;
@@ -81,29 +89,100 @@ function renderTodos() {
     done.checked = true;
   }
 }
+// ----- End of RENDER function --------
 
-loadTodosFromAPI();
+// eventListener
 
-// Update doneState (PATCH)
+// checkbox changes
+all.addEventListener("change", () => {
+  state.filter = "all";
+  render();
+});
+
+done.addEventListener("change", () => {
+  state.filter = "done";
+  render();
+});
+undone.addEventListener("change", () => {
+  state.filter = "undone";
+  render();
+});
+
+// PATCH doneState
 function updateDoneState(todo) {
-  fetch(url + " / " + todo.id, {
+  fetch(url + "/" + todo.id, {
     method: "PATCH",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ done: todo.done }),
   })
-    .then(() => loadTodosFromAPI())
-    .catch((error) => window.alert(error)); //console.error(error)); => von Ari!!!  ???!!!
+    .then(() => refresh())
+    .catch((error) => window.alert(error)); //console.error(error);
 }
 
-function filterTodos(todos, filter) {
-  switch (filter) {
-    case "all":
-      return todos;
-    case "done":
-      return todos.filter((todo) => todo.done);
-    case "undone":
-      return todos.filter((todo) => !todo.done);
-    default:
-      return todos;
+//EVENTLISTENER for dynamic elements
+
+// add new todo
+function addTodo() {
+  let todoValue = textInput.value;
+
+  //proof of value
+  if (!todoValue.trim()) {
+    window.alert("Isn't there anything to do?");
+    return;
   }
+
+  if (
+    state.todos.some(
+      (todo) =>
+        todo.description.toLowerCase().trim() === todoValue.toLowerCase().trim()
+    )
+  ) {
+    window.alert("You already got that on your list!");
+    return;
+  }
+
+  const newTodo = {
+    description: document.getElementById("addField").value,
+    done: false,
+  };
+
+  // POST  newTodo
+  fetch(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ description: todoValue, done: false }),
+  })
+    .then((response) => {
+      refresh();
+      if (response.ok) {
+        textInput.value = ""; // Clear the input field after adding a todo
+      }
+    })
+    .catch((error) => window.alert("struggling with something..")); // console.error(error));
+  render();
 }
+
+addButton.addEventListener("click", addTodo);
+
+//remove done todos
+function removeDoneTodos() {
+  state.todos.forEach((todo) => {
+    if (todo.done) {
+      fetch(url + "/" + todo.id, {
+        method: "DELETE",
+      })
+        .then(() => {
+          refresh();
+        })
+        .catch((error) =>
+          window.alert("Sorry, can't handle this at the moment!")
+        );
+    }
+  });
+}
+
+removeButton.addEventListener("click", removeDoneTodos);
+
+//Initial rendering
+refresh();
+render();
