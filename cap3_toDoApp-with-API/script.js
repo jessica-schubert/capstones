@@ -7,6 +7,9 @@ const textInput = document.getElementById("addField");
 const addButton = document.getElementById("addButton");
 const ul = document.getElementById("ul");
 
+const removeForm = document.getElementById("removeForm");
+const addForm = document.getElementById("addForm");
+
 const url = "http://localhost:4730/todos";
 
 // +++++ STATE ++++
@@ -162,7 +165,11 @@ function addTodo() {
   render();
 }
 
-addButton.addEventListener("click", addTodo);
+// addButton.addEventListener("click", addTodo);
+addForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  addTodo();
+});
 
 //remove done todos
 function removeDoneTodos() {
@@ -181,7 +188,11 @@ function removeDoneTodos() {
   });
 }
 
-removeButton.addEventListener("click", removeDoneTodos);
+// removeButton.addEventListener("click", removeDoneTodos);
+removeForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  removeDoneTodos();
+});
 
 //Initial rendering
 refresh();
