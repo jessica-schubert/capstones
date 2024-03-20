@@ -1,45 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Jessica Schubert">
-    <link rel="stylesheet" href="style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Jessica Schubert" />
+    <link rel="stylesheet" href="style.css" />
 
     <title>My To Do's</title>
+  </head>
 
-</head>
-
-<body>
+  <body>
     <header>
-        <h1>* My To Do App *</h1>
+      <h1>* My To Do App *</h1>
     </header>
     <main>
-        <div id="form">
-            <form class="radioButtons">
-                <input type="radio" name="radioButton" id="all">
-                <label for="all">All</label><br>
-                <input type="radio" name="radioButton" id="done">
-                <label for="done">Done</label><br>
-                <input type="radio" name="radioButton" id="undone">
-                <label for="undone">Undone</label><br>
-            </form>
-            <form class="removeButton">
-                <button class="buttons" id="removeButton">Remove all Done To Do's</button>
-            </form>
+      <div id="form">
+        <form class="radioButtons">
+          <input type="radio" name="radioButton" id="all" />
+          <label for="all">All</label><br />
+          <input type="radio" name="radioButton" id="done" />
+          <label for="done">Done</label><br />
+          <input type="radio" name="radioButton" id="undone" />
+          <label for="undone">Undone</label><br />
+        </form>
+        <form class="removeButton" id="removeForm">
+          <button class="buttons" id="removeButton">
+            Remove all Done To Do's
+          </button>
+        </form>
 
-            <div class="addSection">
-                <input type="text" name="addField" id="addField">
-                <button class="buttons" id="addButton">Add</button>
-            </div>
-            <ul class="toDoList" id="ul"></ul>
+        <form class="addSection" id="addForm">
+          <input type="text" name="addField" id="addField" />
+          <button class="buttons" id="addButton">Add</button>
+        </form>
+        <ul class="toDoList" id="ul"></ul>
 
+        <div id="trash">
+          <div id="trash-number"></div>
+          <button id="empty-trash-btn">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 256 256"
+            >
+              <path
+                fill="currentColor"
+                d="M216 48h-40v-8a24 24 0 0 0-24-24h-48a24 24 0 0 0-24 24v8H40a8 8 0 0 0 0 16h8v144a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16V64h8a8 8 0 0 0 0-16ZM96 40a8 8 0 0 1 8-8h48a8 8 0 0 1 8 8v8H96Zm96 168H64V64h128Zm-80-104v64a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Zm48 0v64a8 8 0 0 1-16 0v-64a8 8 0 0 1 16 0Z"
+              />
+            </svg>
+            Empty trash
+          </button>
         </div>
+      </div>
     </main>
 
-
     <script src="script.js"></script>
-</body>
-
+  </body>
 </html>
