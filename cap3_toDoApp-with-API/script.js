@@ -6,6 +6,8 @@ const removeButton = document.getElementById("removeButton");
 const textInput = document.getElementById("addField");
 const addButton = document.getElementById("addButton");
 const ul = document.getElementById("ul");
+const emptyTrashButton = document.getElementById("empty-trash-btn");
+const trashNumber = document.getElementById("trash-number");
 
 const removeForm = document.getElementById("removeForm");
 const addForm = document.getElementById("addForm");
@@ -42,6 +44,10 @@ function render() {
 
   state.todos
     .filter((todo) => {
+      if (todo.deleted) return false;
+      return true;
+    })
+    .filter((todo) => {
       if (state.filter === "done") {
         return todo.done === true;
       } else if (state.filter === "undone") {
@@ -58,16 +64,47 @@ function render() {
       checkbox.checked = todo.done;
 
       // create span element for todo description
-      const description = document.createElement("span");
-      console.log(todo);
-      description.textContent = todo.description;
+      const description = document.createElement("input");
+
+      description.value = todo.description;
       description.style.padding = ".5rem";
       // Durchgestrichen, wenn die Checkbox gecheckt ist, sonst normal
       description.style.textDecoration = todo.done ? "line-through" : "none";
+      description.style.background = "transparent";
+      description.style.border = "none";
+
+      description.addEventListener("change", () => {
+        fetch(url + "/" + todo.id, {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ description: description.value }),
+        })
+          .then(() => refresh())
+          .catch((error) => window.alert(error)); //console.error(error);
+      });
 
       // append checkbox and span to list element
       listElement.appendChild(checkbox);
       listElement.appendChild(description);
+
+      const removeButton = document.createElement("button");
+      removeButton.textContent = "Remove";
+
+      removeButton.addEventListener("click", () => {
+        fetch(url + "/" + todo.id, {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ deleted: true }),
+        })
+          .then(() => {
+            refresh();
+          })
+          .catch((error) =>
+            window.alert("Sorry, can't handle this at the moment!")
+          );
+      });
+
+      listElement.appendChild(removeButton);
 
       // append list element to ul
       ul.appendChild(listElement);
@@ -91,6 +128,8 @@ function render() {
   if (state.filter === "done") {
     done.checked = true;
   }
+
+  trashNumber.textContent = state.todos.filter((todo) => todo.deleted).length;
 }
 // ----- End of RENDER function --------
 
@@ -126,7 +165,7 @@ function updateDoneState(todo) {
 
 // add new todo
 function addTodo() {
-  let todoValue = textInput.value;
+  const todoValue = textInput.value;
 
   //proof of value
   if (!todoValue.trim()) {
@@ -143,11 +182,6 @@ function addTodo() {
     window.alert("You already got that on your list!");
     return;
   }
-
-  const newTodo = {
-    description: document.getElementById("addField").value,
-    done: false,
-  };
 
   // POST  newTodo
   fetch(url, {
@@ -188,11 +222,29 @@ function removeDoneTodos() {
   });
 }
 
+function emptyTrashBin() {
+  state.todos.forEach((todo) => {
+    if (todo.deleted) {
+      fetch(url + "/" + todo.id, {
+        method: "DELETE",
+      })
+        .then(() => {
+          refresh();
+        })
+        .catch((error) =>
+          window.alert("Sorry, can't handle this at the moment!")
+        );
+    }
+  });
+}
+
 // removeButton.addEventListener("click", removeDoneTodos);
 removeForm.addEventListener("submit", (event) => {
   event.preventDefault();
   removeDoneTodos();
 });
+
+emptyTrashButton.addEventListener("click", emptyTrashBin);
 
 //Initial rendering
 refresh();
