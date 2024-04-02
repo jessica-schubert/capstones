@@ -5,6 +5,10 @@ const undone = document.getElementById("undone");
 const removeButton = document.getElementById("removeButton");
 const textInput = document.getElementById("addField");
 const addButton = document.getElementById("addButton");
+
+const removeForm = document.getElementById("removeForm");
+const addForm = document.getElementById("addForm");
+
 const ul = document.getElementById("ul");
 
 const url = "http://localhost:4730/todos";
@@ -162,7 +166,11 @@ function addTodo() {
   render();
 }
 
-addButton.addEventListener("click", addTodo);
+// add todos//
+addForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  addTodo();
+});
 
 //remove done todos
 function removeDoneTodos() {
@@ -181,8 +189,11 @@ function removeDoneTodos() {
   });
 }
 
-removeButton.addEventListener("click", removeDoneTodos);
+removeForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  removeDoneTodos();
+});
 
-//Initial rendering
+//Initial render
 refresh();
 render();
